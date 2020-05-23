@@ -36,8 +36,8 @@ GAME_FOLDER=$(echo "$EXE" | grep -oP '(.*steamapps)')
 
 if [ $DEBUG == 1 ]; then
     dunstify "Detected Game" "$GAME"
-    echo "Game: $GAME" >> $LOG_FILE
-    echo "Default: $@" >> $LOG_FILE
+    echo "Game: $GAME" >> ${LOG_FILE}
+    echo "Default: $@" >> ${LOG_FILE}
 fi
 
 #-------------------------------------------------------------------------------
@@ -49,11 +49,11 @@ if [ "$GAME" == "HITMAN2" ]; then
     
 elif [ "$GAME" == "Mafia III" ]; then
     # Workaround to reset fullscreen mode to windowed on start because game can't start with it.
-    echo "-1 -20 2560 1440 0 0 0 0 0" > '$GAME_FOLDER/compatdata/360430/pfx/drive_c/users/steamuser/Local Settings/Application Data/2K Games/Mafia III/Saves/videoconfig.cfg'
+    echo "-1 -20 2560 1440 0 0 0 0 0" > '${GAME_FOLDER}/compatdata/360430/pfx/drive_c/users/steamuser/Local Settings/Application Data/2K Games/Mafia III/Saves/videoconfig.cfg'
     HUD=1
     GMD=1
     if [ $DEBUG == 1 ]; then
-        echo "Game folder: $GAME_FOLDER" >> $LOG_FILE
+        echo "Game folder: ${GAME_FOLDER}" >> ${LOG_FILE}
     fi
     
 elif [ "$GAME" == "KingdomComeDeliverance" ]; then
@@ -68,7 +68,7 @@ elif [ "$GAME" == "Yakuza Kiwami" ]; then
 elif [ "$GAME" == "Homeworld" ]; then
     # Skipping broken homeworld lautcher.
     HomeWorld="0" #Select Game 1,2,r1,r2,0
-    HomeWorldDir="$GAME_FOLDER/common/Homeworld"
+    HomeWorldDir="${GAME_FOLDER}/common/Homeworld"
     # Game Select
     if [ $HomeWorld == "r1" ]; then
         EXE="$HomeWorldDir/HomeworldRM/Bin/Release/HomeworldRM.exe"
@@ -98,14 +98,14 @@ elif [ "$GAME" == "Homeworld" ]; then
         #WINECMD="${PROTON_PATH}dist/bin//wine64"
         #STARTCMD="start /unix"
         export WINEDEBUG="-all" 
-        export WINEPREFIX="$GAME_FOLDER/compatdata/${GAMEID}/pfx/" 
+        export WINEPREFIX="${GAME_FOLDER}/compatdata/${GAMEID}/pfx/" 
         export SteamGameId="${GAMEID}" 
         export SteamAppId="${GAMEID}" 
         export WINEDLLOVERRIDES="d3d11=n;dxgi=n" 
         export STEAM_COMPAT_CLIENT_INSTALL_PATH="${HOME}/.steam/steam/" 
         if [ $DEBUG == 1 ]; then
             dunstify "$GAME" "Extra env vars enabled."
-            echo "Game folder: $GAME_FOLDER" >> $LOG_FILE
+            echo "Game folder: ${GAME_FOLDER}" >> ${LOG_FILE}
         fi
     fi
 fi
@@ -139,7 +139,7 @@ if [ $NO_ESYNC == 1 ]; then
 fi
 
 if [ $DEBUG == 1 ]; then
-    echo "Result: $GameMode $WINECMD $STARTCMD $EXE ${OPT[@]}" >> $LOG_FILE
+    echo "Result: $GameMode $WINECMD $STARTCMD $EXE ${OPT[@]}" >> ${LOG_FILE}
 fi
 
 # Run
