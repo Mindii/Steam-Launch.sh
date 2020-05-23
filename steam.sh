@@ -39,6 +39,7 @@ if [[ $1 =~ "proton" ]]; then
     GAME_DIR=$(echo "$EXE" | grep -oP '(.*steamapps)') # Steam game dir
     if [ $DEBUG == 1 ]; then
         dunstify "Detected as" "Proton Game"
+        dunstify "Detected as" "$GAME_DIR"
     fi
 else
     GAME=$(echo "$WINECMD" | grep -oP '(?<=common\/)(.*)(?=\/)') # Games name from games folder used for custom settings for games
@@ -64,12 +65,9 @@ if [ "$GAME" == "HITMAN2" ]; then
     
 elif [ "$GAME" == "Mafia III" ]; then
     # Workaround to reset fullscreen mode to windowed on start because game can't start with it.
-    echo "-1 -20 2560 1440 0 0 0 0 0" > '${GAME_DIR}/compatdata/360430/pfx/drive_c/users/steamuser/Local Settings/Application Data/2K Games/Mafia III/Saves/videoconfig.cfg'
+    echo "0 0 2560 1440 0 0 0 0 0" > "${GAME_DIR}/compatdata/360430/pfx/drive_c/users/steamuser/Local Settings/Application Data/2K Games/Mafia III/Saves/videoconfig.cfg"
     HUD=1
     GMD=1
-    if [ $DEBUG == 1 ]; then
-        echo "Script folder: ${DIR}" >> ${LOG_FILE}
-    fi
     
 elif [ "$GAME" == "KingdomComeDeliverance" ]; then
     HUD=1
