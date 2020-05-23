@@ -24,12 +24,16 @@ NO_ESYNC=0      # DISABLE ESYNC
 DEBUG=1            # DUNSTIFY DEBUG
 
 #-------------------------------------------------------------------------------
-#-- GAME DETECTION AND VAR INIT
+#-- VAR INIT
 #-------------------------------------------------------------------------------
 WINECMD="$1"
 STARTCMD="$2"
 EXE="$3"
 OPT=()
+
+#-------------------------------------------------------------------------------
+#-- FOLDER DETECTION
+#-------------------------------------------------------------------------------
 GAME=$(echo "$EXE" | grep -oP '(common\/).*?(?=\/)' | cut -d/ -f2-) # game name aka games dir name
 GAME_DIR=$(echo "$EXE" | grep -oP '(.*steamapps)') # Steam game dir
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" # Scripts dir
