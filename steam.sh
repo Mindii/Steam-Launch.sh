@@ -18,10 +18,10 @@
 #-------------------------------------------------------------------------------
 #-- DEFAULT CONFIGS
 #-------------------------------------------------------------------------------
-HUD=1               # ENABLE MANGOHUD
-GMD=0               # ENABLE FERAL GAMEMODE
-NO_ESYNC=0      # DISABLE ESYNC
-DEBUG=1            # DUNSTIFY DEBUG
+HUD=1 # ENABLE MANGOHUD
+GMD=0 # ENABLE FERAL GAMEMODE
+NO_ESYNC=0 # DISABLE ESYNC
+DEBUG=1 # DUNSTIFY DEBUG
 
 #-------------------------------------------------------------------------------
 #-- VAR INIT
@@ -34,10 +34,10 @@ OPT=()
 #-------------------------------------------------------------------------------
 #-- FOLDER DETECTION
 #-------------------------------------------------------------------------------
-GAME=$(echo "$EXE" | grep -oP '(common\/).*?(?=\/)' | cut -d/ -f2-) # game name aka games dir name
+GAME=$(echo "$EXE" | grep -oP '(common\/).*?(?=\/)' | cut -d/ -f2-) # Games name from games folder used for custom settings for games
 GAME_DIR=$(echo "$EXE" | grep -oP '(.*steamapps)') # Steam game dir
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" # Scripts dir
-LOG_FILE="${SCRIPT_DIR}/steam.log" # log file localtion
+LOG_FILE="${SCRIPT_DIR}/steam.log" # Log file localtion
 
 if [ $DEBUG == 1 ]; then
     dunstify "Detected Game" "$GAME"
