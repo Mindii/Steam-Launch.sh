@@ -24,21 +24,31 @@ NO_ESYNC=0 # DISABLE ESYNC
 DEBUG=1 # DUNSTIFY DEBUG
 
 #-------------------------------------------------------------------------------
-#-- VAR INIT
+#-- VAR INIT & FOLDER DETECTION
 #-------------------------------------------------------------------------------
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" # Scripts dir
+LOG_FILE="${SCRIPT_DIR}/steam.log" # Log file localtion
 WINECMD="$1"
 STARTCMD="$2"
 EXE="$3"
 OPT=()
 
-#-------------------------------------------------------------------------------
-#-- FOLDER DETECTION
-#-------------------------------------------------------------------------------
-GAME=$(echo "$EXE" | grep -oP '(common\/).*?(?=\/)' | cut -d/ -f2-) # Games name from games folder used for custom settings for games
-GAME_DIR=$(echo "$EXE" | grep -oP '(.*steamapps)') # Steam game dir
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" # Scripts dir
-LOG_FILE="${SCRIPT_DIR}/steam.log" # Log file localtion
+# Check if game is running on proton or is it native and set variables accordingly
+if [[ $1 =~ "proton" ]]; then
+    GAME=$(echo "$EXE" | grep -oP '(?<=common\/)(.*)(?=\/)') # Games name from games folder used for custom settings for games
+    GAME_DIR=$(echo "$EXE" | grep -oP '(.*steamapps)') # Steam game dir
+    if [ $DEBUG == 1 ]; then
+        dunstify "Detected as" "Proton Game"
+    fi
+else
+    GAME=$(echo "$WINECMD" | grep -oP '(?<=common\/)(.*)(?=\/)') # Games name from games folder used for custom settings for games
+    GAME_DIR=$(echo "$WINECMD" | grep -oP '(.*steamapps)') # Steam game dir
+    if [ $DEBUG == 1 ]; then
+        dunstify "Detected as" "Native Game"
+    fi
+fi
 
+# Random debug check
 if [ $DEBUG == 1 ]; then
     dunstify "Detected Game" "$GAME"
     echo "Game: $GAME" >> ${LOG_FILE}
