@@ -1,4 +1,4 @@
-# What this is?
+# What is this?
 Simple script to replace steam launch command with shell script to do more.
 
 
