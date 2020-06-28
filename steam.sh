@@ -35,12 +35,14 @@ EXE="$3"
 OPT=()
 # Check if game is running on proton or is it native and set variables accordingly
 if [[ $1 =~ "proton" ]]; then
+    GAME_STATE="Proton"
     GAME=$(echo "$EXE" | grep -oP '(?<=common\/)(.*)(?=\/)') # Games name from games folder used for custom settings for games
     GAME_DIR=$(echo "$EXE" | grep -oP '(.*steamapps)') # Steam game dir
     if [ $DEBUG == 1 ]; then
         dunstify "Detected as" "Proton Game"
     fi
 else
+    GAME_STATE="Native"
     GAME=$(echo "$WINECMD" | grep -oP '(?<=common\/)(.*)(?=\/)') # Games name from games folder used for custom settings for games
     GAME_DIR=$(echo "$WINECMD" | grep -oP '(.*steamapps)') # Steam game dir
     if [ $DEBUG == 1 ]; then
@@ -74,20 +76,45 @@ elif [ "$GAME" == "Mafia III" ]; then
     echo "0 0 2560 1440 0 0 0 0 0" > "${GAME_DIR}/compatdata/360430/pfx/drive_c/users/steamuser/Local Settings/Application Data/2K Games/Mafia III/Saves/videoconfig.cfg"
     HUD=1
     GMD=1
-    
+
 elif [ "$GAME" == "Planet Coaster" ]; then
     LIMIT=60
     HUD=1
     GMD=1
-    
+
 elif [ "$GAME" == "KingdomComeDeliverance" ]; then
     HUD=1
     GMD=1
-    
+
 elif [ "$GAME" == "Yakuza Kiwami" ]; then
     HUD=1
     GMD=1
     NO_ESYNC=1
+
+elif [ "$GAME" == "Party Hard 2" ]; then
+    LIMIT=60
+    HUD=1
+    GMD=1
+
+elif [ "$GAME" == "State of Mind" ]; then
+    LIMIT=60
+    HUD=1
+    GMD=1
+
+elif [ "$GAME" == "Batman The Telltale Series" ]; then
+    LIMIT=60
+    HUD=1
+    GMD=1
+
+elif [ "$GAME" == "tbs" ]; then
+    LIMIT=60
+    HUD=1
+    GMD=1
+
+elif [ "$GAME" == "Spelunky" ]; then
+    LIMIT=60
+    HUD=1
+    GMD=1
     
 # WIP Broken
 # elif [ "$GAME" == "Homeworld" ]; then
@@ -145,6 +172,10 @@ fi
 # Enabling Mangohud
 if [ $HUD == 1 ]; then
     export MANGOHUD=1
+    if [ $GAME_STATE == "Native" ]; then
+        export MANGOHUD_DLSYM=1
+        #export LD_PRELOAD=/usr/lib/mangohud/lib64/
+    fi
     if [ $LIMIT -gt 0 ]; then
         export MANGOHUD_CONFIG=$MANGO,fps_limit=$LIMIT
         if [ $DEBUG == 1 ]; then
@@ -177,4 +208,12 @@ if [ $DEBUG == 1 ]; then
 fi
 
 # Run
-$GameMode "$WINECMD" "$STARTCMD" "$EXE" "${OPT[@]}"
+if [ $GAME_STATE == "Native" ]; then
+    if [ $HUD == 1 ]; then
+        mangohud $GameMode "$WINECMD" "$STARTCMD" "$EXE" "${OPT[@]}"
+    else
+        $GameMode "$WINECMD" "$STARTCMD" "$EXE" "${OPT[@]}"
+    fi
+else
+    $GameMode "$WINECMD" "$STARTCMD" "$EXE" "${OPT[@]}"
+fi
