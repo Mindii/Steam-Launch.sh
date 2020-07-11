@@ -23,6 +23,8 @@ MANGO=cpu_temp,gpu_temp,ram=1,vram=1,frame_timing=0,core_load=0,font_size=19,bac
 GMD=0 # ENABLE FERAL GAMEMODE
 NO_ESYNC=0 # DISABLE ESYNC
 DEBUG=1 # DUNSTIFY DEBUG
+NO_REDSHIFT=1 # DISABLE REDSHIFT
+NO_CONKY=1 # DISABLE CONKY
 
 #-------------------------------------------------------------------------------
 #-- VAR INIT & FOLDER DETECTION
@@ -36,14 +38,14 @@ OPT=()
 # Check if game is running on proton or is it native and set variables accordingly
 if [[ $1 =~ "proton" ]]; then
     GAME_STATE="Proton"
-    GAME=$(echo "$EXE" | grep -oP '(?<=common\/)(.*)(?=\/)') # Games name from games folder used for custom settings for games
+    GAME=$(echo "$EXE" | grep -oP '(?<=common\/)([a-zA-Z0-9\s]*)') # Games name from games folder used for custom settings for games
     GAME_DIR=$(echo "$EXE" | grep -oP '(.*steamapps)') # Steam game dir
     if [ $DEBUG == 1 ]; then
         dunstify "Detected as" "Proton Game"
     fi
 else
     GAME_STATE="Native"
-    GAME=$(echo "$WINECMD" | grep -oP '(?<=common\/)(.*)(?=\/)') # Games name from games folder used for custom settings for games
+    GAME=$(echo "$WINECMD" | grep -oP '(?<=common\/)([a-zA-Z0-9\s]*)') # Games name from games folder used for custom settings for games
     GAME_DIR=$(echo "$WINECMD" | grep -oP '(.*steamapps)') # Steam game dir
     if [ $DEBUG == 1 ]; then
         dunstify "Detected as" "Native Game"
@@ -54,6 +56,7 @@ if [ $DEBUG == 1 ]; then
     dunstify "Detected Game" "$GAME"
     echo "Game: $GAME" >> ${LOG_FILE}
     echo "Default: $@" >> ${LOG_FILE}
+    echo "EXE: $EXE" >> ${LOG_FILE}
 fi
 
 #-------------------------------------------------------------------------------
@@ -62,8 +65,10 @@ fi
 # Game name is Steam install folder name.
 # HUD 0/1 - Enable mangohud.
 # GMD 0/1 - Enable Feral Gamingmode.
-# LIMIT 0/1 - FPS limitter.
+# LIMIT FPS - FPS limitter.
 # NO_ESYNC 0/1 - Disables esync.
+# NO_REDSHIFT 0/1 - Disables redshift on start.
+# NO_CONKY 0/1 - Disables conky on start.
 # DEBUG 0/1 - Enable debug messages on start using dunsty.
 #-------------------------------------------------------------------------------
 if [ "$GAME" == "HITMAN2" ]; then
@@ -81,6 +86,16 @@ elif [ "$GAME" == "Planet Coaster" ]; then
     LIMIT=60
     HUD=1
     GMD=1
+    
+elif [ "$GAME" == "Planet Zoo" ]; then
+    LIMIT=60
+    HUD=1
+    GMD=1
+    
+elif [ "$GAME" == "Vampyr" ]; then
+    LIMIT=60
+    HUD=1
+    GMD=1
 
 elif [ "$GAME" == "KingdomComeDeliverance" ]; then
     HUD=1
@@ -90,11 +105,6 @@ elif [ "$GAME" == "Yakuza Kiwami" ]; then
     HUD=1
     GMD=1
     NO_ESYNC=1
-
-elif [ "$GAME" == "Party Hard 2" ]; then
-    LIMIT=60
-    HUD=1
-    GMD=1
 
 elif [ "$GAME" == "State of Mind" ]; then
     LIMIT=60
@@ -112,6 +122,11 @@ elif [ "$GAME" == "tbs" ]; then
     GMD=1
 
 elif [ "$GAME" == "Spelunky" ]; then
+    LIMIT=60
+    HUD=1
+    GMD=1
+    
+elif [ "$GAME" == "Life is Strange 2" ]; then
     LIMIT=60
     HUD=1
     GMD=1
@@ -203,6 +218,26 @@ if [ $NO_ESYNC == 1 ]; then
     fi
 fi
 
+# Disabling Redshift
+if [ $NO_REDSHIFT == 1 ]; then
+    if pgrep redshift; then
+        killall redshift &
+        if [ $DEBUG == 1 ]; then
+            dunstify "Redshift" "Killed"
+        fi
+    fi
+fi
+
+# Disabling Conky
+if [ $NO_CONKY == 1 ]; then
+    if pgrep conky; then
+        killall conky &
+        if [ $DEBUG == 1 ]; then
+            dunstify "Conky" "Killed"
+        fi
+    fi
+fi
+
 if [ $DEBUG == 1 ]; then
     echo "Result: $GameMode $WINECMD $STARTCMD $EXE ${OPT[@]}" >> ${LOG_FILE}
 fi
@@ -217,3 +252,36 @@ if [ $GAME_STATE == "Native" ]; then
 else
     $GameMode "$WINECMD" "$STARTCMD" "$EXE" "${OPT[@]}"
 fi
+
+#-------------------------------------------------------------------------------
+#-- EXIT WIP
+#-- Note: Until fixed you need to super + r (Restart wm) after gaming if you want these on.
+#-------------------------------------------------------------------------------
+# Restore redshift
+# if ! pgrep redshift; then
+#     bash -c redshift &
+    #bash -c 'redshift ; bash'
+    #bash --rcfile <("redshift ; bash") 
+    #bash --rcfile <(echo 'redshift')
+    
+    # Create a temporary file
+#     TMPFILE=$(mktemp)
+#     echo "source ~/.bashrc" > $TMPFILE
+#     echo "sh ~/.config/bspwm/scripts/redshift.sh" >> $TMPFILE
+#     echo "rm -f $TMPFILE" >> $TMPFILE
+#     bash --rcfile $TMPFILE
+    
+#     if [ $DEBUG == 1 ]; then
+#         dunstify "Redshift" "Restored"
+#     fi
+# fi
+# 
+# #Restore Conky
+# if ! pgrep conky; then
+#     sh ~/.config/bspwm/scripts/conky.sh
+#     if [ $DEBUG == 1 ]; then
+#         dunstify "Conky" "Restored"
+#     fi
+# fi
+
+#exit 0
